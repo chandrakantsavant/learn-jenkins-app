@@ -2,22 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('test') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    echo "Testing phase initialized here"
-                    test ./build/index.html
-                    npm run test
-                    echo "Testing phase completed successfully"
-                '''
-            }
-        }
         stage('build') {
             agent {
                 docker {
@@ -33,6 +17,22 @@ pipeline {
                     npm ci
                     npm run build
                     echo "Build completed successfully"
+                '''
+            }
+        }
+        stage('test') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    echo "Testing phase initialized here"
+                    test ./build/index.html
+                    npm run test
+                    echo "Testing phase completed successfully"
                 '''
             }
         }
