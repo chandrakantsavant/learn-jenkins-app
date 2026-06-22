@@ -36,5 +36,12 @@ pipeline {
                 '''
             }
         }
+
+        post {
+            always {
+                echo "Cleaning up workspace"
+                junit ./test-results/junit.xml
+            }
+        }
     }
 }
