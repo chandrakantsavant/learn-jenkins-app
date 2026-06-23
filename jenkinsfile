@@ -2,6 +2,8 @@ pipeline {
     agent any
 
     stages {
+        // Single line comment example -
+        // This is build stage where we will build the application using Node.js and npm.
         stage('build') {
             agent {
                 docker {
@@ -20,6 +22,10 @@ pipeline {
                 '''
             }
         }
+        /*
+        # Multi-line comment example -
+        # This is test stage where we will run the tests for the application using Node.js and
+        */
         stage('test') {
             agent {
                 docker {
