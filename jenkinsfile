@@ -14,8 +14,8 @@ pipeline {
             steps {
                 sh '''
                     echo "Steps initialized here"
-                    echo node -version
-                    echo npm -version
+                    node -version
+                    npm -version
                     npm ci
                     npm run build
                     echo "Build completed successfully"
@@ -54,7 +54,7 @@ pipeline {
                 sh '''
                     echo "E2E Testing phase initialized here"
                     serve -s build &
-                    npx playwright install
+                    npm ci
                     npx playwright test
                     echo "E2E Testing phase completed successfully"
                 '''
