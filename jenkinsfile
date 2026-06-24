@@ -54,7 +54,7 @@ pipeline {
                 sh '''
                     echo "E2E Testing phase initialized here"
                     serve -s build &
-                    npm ci
+                    npx install -g playwright
                     npx playwright test
                     echo "E2E Testing phase completed successfully"
                 '''
