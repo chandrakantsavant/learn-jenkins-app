@@ -53,7 +53,7 @@ pipeline {
             steps {
                 sh '''
                     echo "E2E Testing phase initialized here"
-                    node_modules/.bin/serve -s build &
+                    npx serve -s build &
                     npx install -g playwright
                     npx playwright test
                     echo "E2E Testing phase completed successfully"
