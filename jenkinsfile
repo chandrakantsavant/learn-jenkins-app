@@ -22,52 +22,59 @@ pipeline {
                 '''
             }
         }
-        /*
-        # Multi-line comment example -
-        # This is test stage where we will run the tests for the application using Node.js and
-        */
-        stage('test') {
-            agent {
-                docker {
-                    image 'node:18-alpine'
-                    reuseNode true
+        stage('Testing-Phase') {
+            parallel {
+                /*
+                # Multi-line comment example -
+                # This is test stage where we will run the tests for the application using Node.js and
+                */
+                stage('test') {
+                    agent {
+                        docker {
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            echo "Testing phase initialized here"
+                            test -f ./build/index.html
+                            npm run test
+                            echo "Testing phase completed successfully"
+                        '''
+                    }
+                    post {
+                        always {
+                            junit 'jest-results/junit.xml'
+                        }
+                    }
                 }
-            }
-            steps {
-                sh '''
-                    echo "Testing phase initialized here"
-                    test -f ./build/index.html
-                    npm run test
-                    echo "Testing phase completed successfully"
-                '''
-            }
-        }
-        // E2E test stage where we will run the end-to-end tests for the application using Cypress.
-        stage('e2e-test') {
-            agent {
-                docker {
-                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-                    reuseNode true
+                // E2E test stage where we will run the end-to-end tests for the application using Cypress.
+                stage('e2e-test') {
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            echo "E2E Testing phase initialized here"
+                            npm install serve
+                            npx playwright install chromium
+                            node_modules/.bin/serve -s build &
+                            sleep 10
+                            npx playwright test --reporter=html
+                            echo "E2E Testing phase completed successfully"
+                        '''
+                    }
+                    post {
+                        always {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'Test Report', useWrapperFileDirectly: true])
+                        }
+                    }
                 }
-            }
-            steps {
-                sh '''
-                    echo "E2E Testing phase initialized here"
-                    npm install serve
-                    npx playwright install chromium
-                    node_modules/.bin/serve -s build &
-                    sleep 10
-                    npx playwright test --reporter=html
-                    echo "E2E Testing phase completed successfully"
-                '''
             }
         }
     }
-
-    post {
-            always {
-                junit 'jest-results/junit.xml'
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'Test Report', useWrapperFileDirectly: true])
-            }
-        }
 }
