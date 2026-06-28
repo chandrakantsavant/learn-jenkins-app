@@ -7,78 +7,78 @@ pipeline {
     stages {
         // Single line comment example -
         // This is build stage where we will build the application using Node.js and npm.
-        // stage('build') {
-        //     agent {
-        //         docker {
-        //             image 'node:18-alpine'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //             echo "Steps initialized here"
-        //             node --version
-        //             npm --version
-        //             npm ci
-        //             npm run build
-        //             echo "Build completed successfully"
-        //         '''
-        //     }
-        // }
-        // stage('Testing-Phase') {
-        //     parallel {
-        //         /*
-        //         # Multi-line comment example -
-        //         # This is test stage where we will run the tests for the application using Node.js and
-        //         */
-        //         stage('test') {
-        //             agent {
-        //                 docker {
-        //                     image 'node:18-alpine'
-        //                     reuseNode true
-        //                 }
-        //             }
-        //             steps {
-        //                 sh '''
-        //                     echo "Testing phase initialized here"
-        //                     test -f ./build/index.html
-        //                     npm run test
-        //                     echo "Testing phase completed successfully"
-        //                 '''
-        //             }
-        //             post {
-        //                 always {
-        //                     junit 'jest-results/junit.xml'
-        //                 }
-        //             }
-        //         }
-        //         // E2E test stage where we will run the end-to-end tests for the application using Cypress.
-        //         stage('e2e-test') {
-        //             agent {
-        //                 docker {
-        //                     image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
-        //                     reuseNode true
-        //                 }
-        //             }
-        //             steps {
-        //                 sh '''
-        //                     echo "E2E Testing phase initialized here"
-        //                     npm install serve
-        //                     npx playwright install chromium
-        //                     node_modules/.bin/serve -s build &
-        //                     sleep 10
-        //                     npx playwright test --reporter=html
-        //                     echo "E2E Testing phase completed successfully"
-        //                 '''
-        //             }
-        //             post {
-        //                 always {
-        //                     publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'Test Report', useWrapperFileDirectly: true])
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('build') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    echo "Steps initialized here"
+                    node --version
+                    npm --version
+                    npm ci
+                    npm run build
+                    echo "Build completed successfully"
+                '''
+            }
+        }
+        stage('Testing-Phase') {
+            parallel {
+                /*
+                # Multi-line comment example -
+                # This is test stage where we will run the tests for the application using Node.js and
+                */
+                stage('test') {
+                    agent {
+                        docker {
+                            image 'node:18-alpine'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            echo "Testing phase initialized here"
+                            test -f ./build/index.html
+                            npm run test
+                            echo "Testing phase completed successfully"
+                        '''
+                    }
+                    post {
+                        always {
+                            junit 'jest-results/junit.xml'
+                        }
+                    }
+                }
+                // E2E test stage where we will run the end-to-end tests for the application using Cypress.
+                stage('e2e-test') {
+                    agent {
+                        docker {
+                            image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                            reuseNode true
+                        }
+                    }
+                    steps {
+                        sh '''
+                            echo "E2E Testing phase initialized here"
+                            npm install serve
+                            npx playwright install chromium
+                            node_modules/.bin/serve -s build &
+                            sleep 10
+                            npx playwright test --reporter=html
+                            echo "E2E Testing phase completed successfully"
+                        '''
+                    }
+                    post {
+                        always {
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'Test Report', useWrapperFileDirectly: true])
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Deploy') {
             agent {
@@ -92,8 +92,8 @@ pipeline {
                     npm install netlify-cli
                     node_modules/.bin/netlify --version
                     echo "We are deploying to Netlify that has a Site Key: $NETLIFY_SITE_ID"
-                    echo "Following is the access token - $NETLIFY_AUTH_TOKEN"
                     node_modules/.bin/netlify status
+                    node_modules/.bin/netlify deploy --dir=build --prod
 
                 '''
             }
