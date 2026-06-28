@@ -14,6 +14,9 @@ function App() {
         >
           Learn Jenkins on Udemy with Chandrakant Savant
         </a>
+        <p>
+          This is new text added in p tag to test the automatic pipeline configuration...
+        </p>
       </header>
       <p>
           Application version: 1
