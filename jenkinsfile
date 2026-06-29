@@ -101,7 +101,7 @@ pipeline {
 
         stage('Approve Prod Deploy') {
             steps {
-                timeout(1) {
+                timeout(10) {
                     input cancel: 'No Abort', message: 'Do you want to continue with next step of deployment?', ok: 'Yes I do'
                 }
             }
