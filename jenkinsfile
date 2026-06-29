@@ -94,7 +94,7 @@ pipeline {
                     echo "We are deploying to Netlify that has a Site Key: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --json > stage-deploy-output.json
-                    node_modules/.bin/jq -r '.deploy_url' stage-deploy-output.json
+                    npx jq -r '.deploy_url' stage-deploy-output.json
 
                 '''
 
