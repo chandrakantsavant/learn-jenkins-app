@@ -99,6 +99,14 @@ pipeline {
             }
         }
 
+        stage('Approve Prod Deploy') {
+            steps {
+                timeout(1) {
+                    input cancel: 'No Abort', message: 'Do you want to continue with next step of deployment?', ok: 'Yes I do'
+                }
+            }
+        }
+
         stage('Deploy Prod') {
             agent {
                 docker {
