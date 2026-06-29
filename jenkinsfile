@@ -97,11 +97,11 @@ pipeline {
                     node_modules/.bin/jq -r '.deploy_url' stage-deploy-output.json
 
                 '''
-            }
 
-            script {
+                script {
                     env.STAGING_DEPLOY_URL= sh(script:"node_modules/.bin/jq -r '.deploy_url' stage-deploy-output.json", returnStdOut=true)
                 }
+            }
         }
 
         stage('e2e-test-staging') {
