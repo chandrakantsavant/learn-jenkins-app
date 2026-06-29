@@ -73,7 +73,7 @@ pipeline {
                     }
                     post {
                         always {
-                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: 'Test Report', useWrapperFileDirectly: true])
+                            publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report Local', reportTitles: 'Test Report', useWrapperFileDirectly: true])
                         }
                     }
                 }
@@ -96,6 +96,32 @@ pipeline {
                     node_modules/.bin/netlify deploy --dir=build --prod
 
                 '''
+            }
+        }
+
+        stage('e2e-test-production') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
+                    reuseNode true
+                }
+            }
+
+            environment {
+                CI_ENVIRONMENT_URL='https://profound-raindrop-2a6c17.netlify.app'
+            }
+
+            steps {
+                sh '''
+                    echo "E2E Testing phase for production initialized here"
+                    npx playwright test --reporter=html
+                    echo "E2E Testing production phase completed successfully"
+                '''
+            }
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'HTML Report Production', reportTitles: 'Test Report', useWrapperFileDirectly: true])
+                }
             }
         }
     }
